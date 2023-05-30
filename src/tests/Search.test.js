@@ -66,3 +66,52 @@ describe('Testa as funcionalidades da aplicação', () => {
     global.fetch = jest.fn(() => Promise.resolve({
       json: () => Promise.resolve({ ErrorMsg }),
     }));
+    renderWithRouter(<App />);
+
+    const searchInput = screen.getByRole('textbox', { name: /Digimon/i });
+    userEvent.type(searchInput, 'Pikachu');
+
+    const button = screen.getByRole('button', { name: /Search Digimon/i });
+    userEvent.click(button);
+
+    await screen.findByText('Pikachu is not a Digimon in our database.');
+
+    expect(global.fetch).toBeCalledTimes(1);
+  });
+
+  it('Caso a caixa de busca esteja vazia, nenhum fetch é realizado', async () => {
+    renderWithRouter(<App />);
+
+    const searchInput = screen.getByRole('textbox', { name: /Digimon/i });
+    expect(searchInput).toHaveValue('');
+
+    const button = screen.getByRole('button', { name: /Search Digimon/i });
+    userEvent.click(button);
+
+    expect(global.fetch).toBeCalledTimes(0);
+  });
+
+  it('A busca falha (erro no servidor)', async () => {
+    jest.spyOn(global, 'fetch');
+    await global.fetch.mockRejectedValue(
+      new Error('Oops! Algo de errado não está certo!'),
+    );
+
+    jest.spyOn(global.console, 'log');
+
+    renderWithRouter(<App />);
+
+    const searchInput = screen.getByRole('textbox', { name: /Digimon/i });
+    const button = screen.getByRole('button', { name: /Search Digimon/i });
+    userEvent.type(searchInput, 'Teste');
+    userEvent.click(button);
+
+    await waitFor(() => {
+      expect(global.fetch).toBeCalledTimes(1);
+      expect(console.log).toHaveBeenCalledTimes(1);
+      expect(console.log).toBeCalledWith(
+        'Erro ao fazer a requisição: Error: Oops! Algo de errado não está certo!',
+      );
+    });
+  });
+});
