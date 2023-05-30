@@ -19,3 +19,42 @@ describe('Testa as rotas da aplicação', () => {
       expect(aboutLink).toBeInTheDocument();
       expect(searchLink).toBeInTheDocument();
     });
+    it('Ao clicar no link "About", direciona para a rota "/about"', () => {
+        const { history } = renderWithRouter(<App />);
+    
+        const aboutLink = screen.getByRole('link', { name: 'About' });
+        expect(aboutLink).toBeInTheDocument();
+        userEvent.click(aboutLink);
+    
+        const { pathname } = history.location;
+    
+        expect(pathname).toBe('/about');
+    
+        const aboutTitle = screen.getByRole(
+          'heading',
+          { name: 'About' },
+        );
+    
+        expect(aboutTitle).toBeInTheDocument();
+      });
+    
+      it('Renderiza o NotFound caso seja acessada uma rota inexistente', () => {
+        const { history } = renderWithRouter(<App />);
+    
+        const INVALID_URL = '/xablau';
+        act(() => {
+          history.push(INVALID_URL);
+        });
+    
+        const notFoundTitle = screen.getByRole(
+          'heading',
+          { name: 'Page Not Found' },
+        );
+        expect(notFoundTitle).toBeInTheDocument();
+    
+        const notFoundText = screen.getByText(
+          'A página que você está procurando não existe!',
+        );
+        expect(notFoundText).toBeInTheDocument();
+      });
+    });
