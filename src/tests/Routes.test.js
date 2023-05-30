@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { act } from 'react-dom/test-utils';
 import { screen } from '@testing-library/react';
 import App from '../App';
-import renderWithRouter from './utils/RenderWithRouter';
+import renderWithRouter from './RenderWithRouter';
 
 describe('Testa as rotas da aplicação', () => {
   it('Aplicação é renderizada com sucesso', () => {

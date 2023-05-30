@@ -2,7 +2,7 @@ import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import App from '../App';
-import renderWithRouter from './utils/RenderWithRouter';
+import renderWithRouter from './RenderWithRouter';
 
 describe('Testa as funcionalidades da aplicação', () => {
   afterEach(() => jest.clearAllMocks());
